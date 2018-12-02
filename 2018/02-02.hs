@@ -31,4 +31,4 @@ tplDiff (a, b)
   | otherwise = 1
 
 tplEq :: (Eq a) => (a,a) -> Bool
-tplEq (a, b) = a == b 
+tplEq = uncurry (==)

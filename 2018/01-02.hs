@@ -2,47 +2,44 @@ module Main where
 
 import Control.Monad.Loops
 import Control.Monad.State.Lazy
+import Data.Set (Set, empty, insert, member)
 
 data Problem = Problem
   { input :: [String]
-  , table :: [(Int, Int)]
+  , set :: Set Int
   , count :: Int
-  , index :: Int
   }
   deriving Show
 
 p :: String -> Problem 
 p s = Problem 
         { input = cycle $ lines s
-        , table = []
+        , set = empty :: Set Int
         , count = 0
-        , index = 0
         }
 
 next :: Problem -> (Maybe Int, Problem)
 next Problem
-  { input = xs
-  , table = t
-  , count = acc
-  , index = i } = (res, ns)
-    where n = case xs !! i of
+  { input = input'
+  , set = t
+  , count = acc } = (res, ns)
+    where x:xs = input'
+          n = case x of
                 ('+':num) -> (read num :: Int)
                 ('-':num) -> -(read num :: Int)
                 _ -> 0 :: Int
           c = acc + n
-          (res, t') = case lookup c t of
-                          Just _ -> (Just c, t)
-                          Nothing -> (Nothing, (c, n):t)
+          (res, t') = case member c t of
+                          True -> (Just c, t)
+                          False -> (Nothing, insert c t)
           ns = Problem { input = xs
-                       , table = t'
+                       , set = t'
                        , count = c
-                       , index = i + 1
                        }
 
 search :: State Problem (Maybe Int)
 search = do
   res <- state next
-  -- return res
   case res of
     Just x -> return $ Just x
     Nothing -> search
