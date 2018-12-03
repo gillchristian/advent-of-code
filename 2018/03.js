@@ -45,10 +45,10 @@ const width = lines
 
 const canvas = new Array(height)
   .fill(0)
-  .map(() => new Array(width).fill(0))
+  .map(() => new Array(width).fill([]))
 
 lines
-  .forEach(({ width, height, top, left }) => {
+  .forEach(({ id, width, height, top, left }) => {
     const xFrom = top
     const xTo = top + height
     const yFrom = left
@@ -56,7 +56,7 @@ lines
 
     for (let i = xFrom ; i < xTo ; i++) {
       for (let j = yFrom ; j < yTo ; j++) {
-        canvas[i][j] = canvas[i][j] + 1
+        canvas[i][j] = [ id, ...canvas[i][j] ]
       }
     }
   })
@@ -65,5 +65,36 @@ const cells = []
   .concat(...canvas)
 
 console.log(
-  JSON.stringify({ cells: cells.filter(c => c > 1).length }),
+  "Overlaping: ",
+  cells.filter(i => i.length > 1).length,
+)
+
+const map = {}
+
+canvas
+  .forEach(line => {
+    line.forEach((ids) => {
+      if (ids.length === 0) {
+        return
+      }
+
+      if (ids.length > 1) {
+        ids.forEach(id => { map[id] = 'more' })
+        return
+      }
+
+      if (map[ids[0]] === 'more') {
+        return
+      }
+
+      map[ids[0]] = 'one'
+
+    })
+  })
+
+console.log(
+  "Free claim: ",
+  Object
+    .entries(map)
+    .find(kv => kv[1] === 'one')[0]
 )
