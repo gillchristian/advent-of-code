@@ -64,10 +64,9 @@ lines
 const cells = []
   .concat(...canvas)
 
-console.log(
-  "Overlaping: ",
-  cells.filter(i => i.length > 1).length,
-)
+const over = cells.filter(i => i.length > 1).length
+
+console.log(`Overlapping inches: ${over}`)
 
 const map = {}
 
@@ -92,9 +91,8 @@ canvas
     })
   })
 
-console.log(
-  "Free claim: ",
-  Object
-    .entries(map)
-    .find(kv => kv[1] === 'one')[0]
-)
+const free = Object
+  .entries(map)
+  .find(kv => kv[1] === 'one')
+
+console.log(`Free claim: #${free[0]}`)
