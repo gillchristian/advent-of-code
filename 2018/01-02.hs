@@ -1,6 +1,5 @@
 module Main where
 
-import Control.Monad.Loops
 import Control.Monad.State.Lazy
 import Data.Set (Set, empty, insert, member)
 
@@ -25,13 +24,13 @@ next Problem
   , count = acc } = (res, ns)
     where x:xs = input'
           n = case x of
-                ('+':num) -> (read num :: Int)
-                ('-':num) -> -(read num :: Int)
-                _ -> 0 :: Int
+                ('+':num) -> read num
+                ('-':num) -> -read num
+                _ -> 0
           c = acc + n
-          (res, t') = case member c t of
-                          True -> (Just c, t)
-                          False -> (Nothing, insert c t)
+          (res, t') = if member c t
+                         then (Just c, t)
+                         else (Nothing, insert c t)
           ns = Problem { input = xs
                        , set = t'
                        , count = c
@@ -46,6 +45,6 @@ search = do
 
 main :: IO ()
 main = do
-  s <- readFile "01-01.input.txt"
+  s <- readFile "01.input.txt"
   let res = evalState search $ p s
   print res

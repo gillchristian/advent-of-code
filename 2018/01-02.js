@@ -1,6 +1,6 @@
 const { readFileSync } = require('fs')
 
-const input = readFileSync('./01-01.input.txt', 'utf-8')
+const input = readFileSync('./01.input.txt', 'utf-8')
 
 const find = (count, results) => {
   const result = input

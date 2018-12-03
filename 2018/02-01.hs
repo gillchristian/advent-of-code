@@ -5,10 +5,10 @@ import Data.List.Unique (count)
 
 main :: IO ()
 main = do
-  s <- readFile "02-01.input.txt"
+  s <- readFile "02.input.txt"
   let t = foldl search (0, 0) $ lines s
   print t
-  print $ fst t * snd t -- result
+  print $ uncurry (*) t -- result
 
 search :: (Integer, Integer) -> String -> (Integer, Integer)
 search (c2, c3) line = (c2', c3')
