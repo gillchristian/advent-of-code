@@ -8,4 +8,4 @@ main = do
 f :: Integer -> String -> Integer
 f acc ('+':n) = acc + (read n :: Integer)
 f acc ('-':n) = acc - (read n :: Integer)
-f acc _ = acc
+f acc _       = acc
