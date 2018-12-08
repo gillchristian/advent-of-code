@@ -1,11 +1,11 @@
-module Main where
+module Day05 where
 
 import           Data.Char
 import           Data.Set  (fromList, toList)
 
 main :: IO ()
 main = do
-  input <- readFile "05.input.txt"
+  input <- readFile "input/05.txt"
   let clean = filter isLetter input
   print $ collapse clean
   print $ findBest clean

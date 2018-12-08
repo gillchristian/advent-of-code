@@ -1,6 +1,6 @@
 const { readFileSync } = require('fs')
 
-const input = readFileSync('./03.input.txt', 'utf-8')
+const input = readFileSync('./input/03.txt', 'utf-8')
 
 const sToI = v => parseInt(v, 10)
 
