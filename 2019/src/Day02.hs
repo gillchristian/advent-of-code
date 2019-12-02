@@ -1,4 +1,4 @@
-module Main where
+module Day02 where
 
 import Data.List (find)
 
@@ -56,7 +56,7 @@ part2 expected initialMachine =
 
 -- do the IO \o/
 
-main :: IO ()
-main = do
+day02 :: IO ()
+day02 = do
   putStrLn $ "Part 1: " ++ show (part1 input input)
   putStrLn $ "Part 2: " ++ show (part2 expected input pairs)

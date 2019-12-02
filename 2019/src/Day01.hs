@@ -1,4 +1,4 @@
-module Main where
+module Day01 where
 
 parse :: String -> [Int]
 parse = fmap read . lines
@@ -24,8 +24,9 @@ part1 = sum . fmap formula . parse
 part2 :: String -> Int
 part2 = sum . fmap calculate . parse
 
-main :: IO ()
-main = do
-  input <- readFile "2019/input/day-01"
+day01 :: IO ()
+day01 = do
+  -- TODO: data-files
+  input <- readFile "input/day-01"
   putStrLn $ "Part 1: " ++ show (part1 input)
   putStrLn $ "Part 2: " ++ show (part2 input)

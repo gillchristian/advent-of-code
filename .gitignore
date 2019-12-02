@@ -1,1 +1,5 @@
 node_modules
+
+.stack-work/
+aoc2019.cabal
+*~
