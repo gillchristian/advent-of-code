@@ -11,8 +11,8 @@ input =
 pairs :: [(Int, Int)]
 pairs = (,) <$> [0 .. 99] <*> [0 .. 99]
 
-expected :: Int
-expected = 19690720
+expectedOutput :: Int
+expectedOutput = 19690720
 
 -- UTILS
 
@@ -22,19 +22,21 @@ replace n newVal (x : xs)
   | n == 0 = newVal : xs
   | otherwise = x : replace (n -1) newVal xs
 
-handleCase :: (Int -> Int -> Int) -> (Int, Int, Int) -> [Int] -> [Int] -> Int
-handleCase operation (a, b, at) all rest = runMachine all' rest'
+runOperation :: (Int -> Int -> Int) -> (Int, Int, Int) -> [Int] -> [Int] -> Int
+runOperation operation (a, b, at) program rest = runMachine program' rest'
   where
-    updated = (all !! a) `operation` (all !! b)
-    all' = replace at updated all
-    rest' = drop (length all' - length rest) all'
+    updated = (program !! a) `operation` (program !! b)
+    program' = replace at updated program
+    rest' = drop (length program' - length rest) program'
 
 -- WARNING: not complete function (assumes a lot about the input program)
 runMachine :: [Int] -> [Int] -> Int
-runMachine _ [] = error "run out of input"
 runMachine (output : _) (99 : _) = output
-runMachine all (1 : x : y : z : rest) = handleCase (+) (x, y, z) all rest
-runMachine all (2 : x : y : z : rest) = handleCase (*) (x, y, z) all rest
+runMachine program (1 : x : y : z : rest) =
+  runOperation (+) (x, y, z) program rest
+runMachine program (2 : x : y : z : rest) =
+  runOperation (*) (x, y, z) program rest
+runMachine _ _ = error "case not covered, sorry :)"
 
 findOutput :: Int -> [Int] -> (Int, Int) -> Bool
 findOutput expected machine (noun, verb) =
@@ -59,4 +61,4 @@ part2 expected initialMachine =
 day02 :: IO ()
 day02 = do
   putStrLn $ "Part 1: " ++ show (part1 input input)
-  putStrLn $ "Part 2: " ++ show (part2 expected input pairs)
+  putStrLn $ "Part 2: " ++ show (part2 expectedOutput input pairs)

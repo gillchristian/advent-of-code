@@ -5,12 +5,22 @@ license:             MIT
 
 description:         Advent of Code 2019 solutions
 
+ghc-options:
+- -Wall
+- -Wcompat
+- -Wincomplete-record-updates
+- -Wincomplete-uni-patterns
+- -Wredundant-constraints
+
 dependencies:
 - base >= 4.7 && < 5
 - containers
 
+data-files: inputs/*.txt
+
 library:
   source-dirs: src
+  generated-other-modules: Paths_aoc2019
 
 executables:
   aoc2019-exe:
@@ -22,6 +32,8 @@ executables:
     - -with-rtsopts=-N
     dependencies:
     - aoc2019
+    other-modules:
+    - Paths_aoc2019
 
 tests:
   aoc2019-test:
