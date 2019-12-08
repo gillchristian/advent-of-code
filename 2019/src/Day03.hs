@@ -49,22 +49,26 @@ parseSegment s = error $ "invalid segment: '" ++ s ++ "'"
 parseInput :: String -> Wires
 parseInput input = (wire1, wire2)
   where
-    (wire1 : wire2 : _) = fmap (fmap parseSegment . splitOn ",") $ lines input
+    rows = fmap (fmap parseSegment . splitOn ",") $ lines input
+    wire1 = head rows
+    wire2 = head $ tail rows
 
 -- Processing
 
-followSegment :: Coord -> Set.Set Coord -> Segment -> (Coord, Set.Set Coord)
-followSegment currentCoord wire (Segment _ (-1)) = (currentCoord, wire)
-followSegment (x, y) wire seg =
-  followSegment coord (Set.insert coord wire) $ mapseg dec seg
-  where
-    coord = case seg of
-      Segment U _ -> (x, y + 1)
-      Segment D _ -> (x, y -1)
-      Segment R _ -> (x + 1, y)
-      Segment L _ -> (x -1, y)
+nextCoord :: Coord -> Segment -> Coord
+nextCoord (x, y) (Segment U _) = (x, y + 1)
+nextCoord (x, y) (Segment D _) = (x, y -1)
+nextCoord (x, y) (Segment R _) = (x + 1, y)
+nextCoord (x, y) (Segment L _) = (x -1, y)
 
-followWire :: Coord -> Set.Set Coord -> [Segment] -> Set.Set Coord
+followSegment :: Coord -> [Coord] -> Segment -> (Coord, [Coord])
+followSegment currentCoord wire (Segment _ (-1)) = (currentCoord, wire)
+followSegment coord wire seg = followSegment coord' (coord' : wire) seg'
+  where
+    coord' = nextCoord coord seg
+    seg' = mapseg dec seg
+
+followWire :: Coord -> [Coord] -> [Segment] -> [Coord]
 followWire _ wire [] = wire
 followWire currentCoord wire (nextSegment : rest) =
   followWire currentCoord' wire' rest
@@ -77,23 +81,16 @@ followWire currentCoord wire (nextSegment : rest) =
 dec :: Num a => a -> a
 dec = subtract 1
 
-center :: Coord
-center = (0, 0)
-
-emptyWire :: Set.Set Coord
-emptyWire = Set.singleton center
-
 -- SOLUTIONS
 
 part1 :: ([Segment], [Segment]) -> Int
-part1 (w1, w2) =
+part1 segments =
   Set.elemAt 0
-    $ Set.filter (/= 0)
     $ Set.map manhattanDistance
-    $ (w1') `Set.intersection` w2'
+    $ w1 `Set.intersection` w2
   where
-    w1' = followWire center emptyWire w1
-    w2' = followWire center emptyWire w2
+    w1 = Set.fromList $ followWire (0, 0) [] (fst segments)
+    w2 = Set.fromList $ followWire (0, 0) [] (snd segments)
 
 -- Do the IO \o/
 
