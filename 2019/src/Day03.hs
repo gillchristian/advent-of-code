@@ -16,16 +16,10 @@ data Direction
 
 data Segment
   = Segment
-      { dir :: Direction,
+      { direction :: Direction,
         unsegment :: Int
       }
   deriving (Show)
-
-mapseg :: (Int -> Int) -> Segment -> Segment
-mapseg f (Segment d n) = Segment d $ f n
-
-instance Eq Segment where
-  (==) a b = dir a == dir b
 
 type X = Int
 
@@ -69,22 +63,20 @@ nextCoord (x, y) (Segment R _) = (x + 1, y)
 nextCoord (x, y) (Segment L _) = (x -1, y)
 
 followSegment :: Coord -> Path -> Segment -> (Coord, Path)
-followSegment currentCoord wire (Segment _ (-1)) = (currentCoord, wire)
-followSegment coord wire seg = followSegment coord' (coord' : wire) seg'
+followSegment currentCoord wire (Segment _ 0) = (currentCoord, wire)
+followSegment coord wire seg@(Segment dir n) =
+  followSegment coord' (coord' : wire) $ Segment dir (dec n)
   where
     coord' = nextCoord coord seg
-    seg' = mapseg dec seg
 
 followWire :: Wire -> Path
 followWire = go (0, 0) []
   where
     go :: Coord -> Path -> Wire -> Path
     go _ wire [] = reverse wire
-    go currentCoord wire (nextSegment : rest) =
-      go currentCoord' wire' rest
+    go currentCoord wire (nextSegment : rest) = go currentCoord' wire' rest
       where
-        (currentCoord', wire') =
-          followSegment currentCoord wire $ mapseg dec nextSegment
+        (currentCoord', wire') = followSegment currentCoord wire nextSegment
 
 followWires :: Wires -> BothPaths
 followWires = bimap followWire followWire
