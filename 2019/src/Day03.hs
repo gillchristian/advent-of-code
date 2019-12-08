@@ -1,6 +1,9 @@
 module Day03 where
 
+import Data.Bifunctor (bimap)
+import Data.List (find, sort)
 import Data.List.Split (splitOn)
+import Data.Maybe (catMaybes)
 import qualified Data.Set as Set
 import Paths_aoc2019 (getDataFileName)
 
@@ -34,6 +37,10 @@ type Wires = (Wire, Wire)
 
 type Coord = (X, Y)
 
+type Path = [Coord]
+
+type BothPaths = (Path, Path)
+
 manhattanDistance :: Coord -> Int
 manhattanDistance (x, y) = abs x + abs y
 
@@ -61,20 +68,30 @@ nextCoord (x, y) (Segment D _) = (x, y -1)
 nextCoord (x, y) (Segment R _) = (x + 1, y)
 nextCoord (x, y) (Segment L _) = (x -1, y)
 
-followSegment :: Coord -> [Coord] -> Segment -> (Coord, [Coord])
+followSegment :: Coord -> Path -> Segment -> (Coord, Path)
 followSegment currentCoord wire (Segment _ (-1)) = (currentCoord, wire)
 followSegment coord wire seg = followSegment coord' (coord' : wire) seg'
   where
     coord' = nextCoord coord seg
     seg' = mapseg dec seg
 
-followWire :: Coord -> [Coord] -> [Segment] -> [Coord]
-followWire _ wire [] = wire
-followWire currentCoord wire (nextSegment : rest) =
-  followWire currentCoord' wire' rest
+followWire :: Wire -> Path
+followWire = go (0, 0) []
   where
-    (currentCoord', wire') =
-      followSegment currentCoord wire $ mapseg dec nextSegment
+    go :: Coord -> Path -> Wire -> Path
+    go _ wire [] = reverse wire
+    go currentCoord wire (nextSegment : rest) =
+      go currentCoord' wire' rest
+      where
+        (currentCoord', wire') =
+          followSegment currentCoord wire $ mapseg dec nextSegment
+
+followWires :: Wires -> BothPaths
+followWires = bimap followWire followWire
+
+findIntersections :: BothPaths -> Set.Set Coord
+findIntersections (w1, w2) =
+  (Set.fromList $ w1) `Set.intersection` (Set.fromList $ w2)
 
 -- UTILS
 
@@ -83,18 +100,30 @@ dec = subtract 1
 
 -- SOLUTIONS
 
-part1 :: ([Segment], [Segment]) -> Int
-part1 segments =
-  Set.elemAt 0
-    $ Set.map manhattanDistance
-    $ w1 `Set.intersection` w2
+part1 :: Set.Set Coord -> Int
+part1 intersections = Set.elemAt 0 $ Set.map manhattanDistance intersections
+
+part2 :: Set.Set Coord -> BothPaths -> Int
+part2 intersections wires = head $ sort $ catMaybes $ map (mapper w2) w1
   where
-    w1 = Set.fromList $ followWire (0, 0) [] (fst segments)
-    w2 = Set.fromList $ followWire (0, 0) [] (snd segments)
+    -- add the length & filter out the coordinates that arent intersections
+    w1 = filter (\a -> Set.member (snd a) intersections) $ zip [1 ..] $ fst wires
+    w2 = filter (\a -> Set.member (snd a) intersections) $ zip [1 ..] $ snd wires
+    -- find the matching intersection
+    finder :: [(Int, Coord)] -> (Int, Coord) -> Maybe (Int, Coord)
+    finder w2' a = find (\b -> snd a == snd b) w2'
+    -- get the distance of the intersection
+    mapper :: [(Int, Coord)] -> (Int, Coord) -> Maybe Int
+    mapper w2' a = (\b -> fst a + fst b) <$> finder w2' a
 
 -- Do the IO \o/
 
+getInput :: IO String
+getInput = readFile =<< getDataFileName "inputs/day-03.txt"
+
 day03 :: IO ()
 day03 = do
-  input <- parseInput <$> (readFile =<< getDataFileName "inputs/day-03.txt")
-  putStrLn $ "Part 01: " ++ (show $ part1 input)
+  wires <- followWires <$> parseInput <$> getInput
+  let intersections = findIntersections wires
+  putStrLn $ "Part 01: " ++ (show $ part1 intersections)
+  putStrLn $ "Part 02: " ++ (show $ part2 intersections wires)
