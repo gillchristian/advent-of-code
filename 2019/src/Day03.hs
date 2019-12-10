@@ -3,7 +3,7 @@ module Day03 where
 import Data.Bifunctor (bimap)
 import Data.List (find, sort)
 import Data.List.Split (splitOn)
-import Data.Maybe (catMaybes)
+import Data.Maybe (mapMaybe)
 import qualified Data.Set as Set
 import Paths_aoc2019 (getDataFileName)
 
@@ -50,7 +50,7 @@ parseSegment s = error $ "invalid segment: '" ++ s ++ "'"
 parseInput :: String -> Wires
 parseInput input = (wire1, wire2)
   where
-    rows = fmap (fmap parseSegment . splitOn ",") $ lines input
+    rows = fmap parseSegment . splitOn "," <$> lines input
     wire1 = head rows
     wire2 = head $ tail rows
 
@@ -83,7 +83,7 @@ followWires = bimap followWire followWire
 
 findIntersections :: BothPaths -> Set.Set Coord
 findIntersections (w1, w2) =
-  (Set.fromList $ w1) `Set.intersection` (Set.fromList $ w2)
+  Set.fromList $ w1 `Set.intersection` Set.fromList $ w2
 
 -- UTILS
 
@@ -96,7 +96,7 @@ part1 :: Set.Set Coord -> Int
 part1 intersections = Set.elemAt 0 $ Set.map manhattanDistance intersections
 
 part2 :: Set.Set Coord -> BothPaths -> Int
-part2 intersections wires = head $ sort $ catMaybes $ map (mapper w2) w1
+part2 intersections wires = minimum $ mapMaybe (mapper w2) w1
   where
     -- add the length & filter out the coordinates that arent intersections
     w1 = filter (\a -> Set.member (snd a) intersections) $ zip [1 ..] $ fst wires
@@ -115,7 +115,7 @@ getInput = readFile =<< getDataFileName "inputs/day-03.txt"
 
 day03 :: IO ()
 day03 = do
-  wires <- followWires <$> parseInput <$> getInput
+  wires <- followWires . parseInput <$> getInput
   let intersections = findIntersections wires
-  putStrLn $ "Part 01: " ++ (show $ part1 intersections)
-  putStrLn $ "Part 02: " ++ (show $ part2 intersections wires)
+  putStrLn $ "Part 01: " ++ show (part1 intersections)
+  putStrLn $ "Part 02: " ++ show (part2 intersections wires)
