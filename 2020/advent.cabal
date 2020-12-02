@@ -4,26 +4,22 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 3c724611e5df685a3d7825375849373b1eccdecbbad8e417e7f5e005889a37e9
+-- hash: 74559898d7aba82dc6ce2e2860a16c72169795dbb31b523782f8c4b17f9a0250
 
 name:           advent
 version:        0.1.0.0
-description:    Please see the README on GitHub at <https://github.com/githubuser/advent#readme>
-homepage:       https://github.com/githubuser/advent#readme
-bug-reports:    https://github.com/githubuser/advent/issues
-author:         Author name here
-maintainer:     example@example.com
-copyright:      2020 Author name here
-license:        BSD3
-license-file:   LICENSE
+homepage:       https://github.com/gillchristian/advent#readme
+bug-reports:    https://github.com/gillchristian/advent/issues
+author:         Christian Gill
+maintainer:     Christian Gill
+copyright:      2020 Christian Gill
 build-type:     Simple
 extra-source-files:
-    README.md
-    ChangeLog.md
+    readme.md
 
 source-repository head
   type: git
-  location: https://github.com/githubuser/advent
+  location: https://github.com/gillchristian/advent
 
 library
   exposed-modules:
