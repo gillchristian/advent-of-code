@@ -30,13 +30,8 @@ solution1 = length . filter inRange . map filterOtherChars
 solution2 :: [Password] -> Int
 solution2 = length . filter policy
   where
-    policy (Password (from, to) c pass)
-      | f && t = False
-      | f || t = True
-      | otherwise = False
-      where
-        f = pass !! (from - 1) == c
-        t = pass !! (to - 1) == c
+    policy (Password (from, to) c pass) =
+      (pass !! (from - 1) == c) /= (pass !! (to - 1) == c)
 
 day02 :: IO ()
 day02 = do
