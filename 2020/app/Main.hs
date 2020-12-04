@@ -3,6 +3,7 @@ module Main where
 import Day01 (day01)
 import Day02 (day02)
 import Day03 (day03)
+import Day04 (day04)
 import qualified System.Environment as Env
 
 runDay :: String -> IO ()
@@ -18,6 +19,9 @@ runDay "02" = do
 runDay "03" = do
   putStrLn "Day 03"
   day03
+runDay "04" = do
+  putStrLn "Day 03"
+  day04
 runDay x = do
   putStrLn $ "Day '" ++ x ++ "' not available yet ..."
   runDay =<< getLine
