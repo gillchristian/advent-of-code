@@ -1,7 +1,4 @@
-module Day02
-  ( day02,
-  )
-where
+module Day02 where
 
 import Control.Monad (void)
 import Text.Parsec as P
