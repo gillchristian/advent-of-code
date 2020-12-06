@@ -1,7 +1,8 @@
 {-# LANGUAGE OverloadedStrings #-}
+
 module Day06 where
 
-import Data.List (sort, nub)
+import Data.List (nub)
 import Data.Text (Text)
 import qualified Data.Text as Text
 import qualified Data.Text.IO as TextIO
@@ -11,11 +12,12 @@ countUniqueChars =
   sum . fmap (length . nub . Text.unpack . Text.replace "\n" "")
 
 countCommonChars :: [String] -> Int
-countCommonChars lns = length $ filter id $ fmap allHaveChar ['a'..'z']
-  where  allHaveChar c = all (c `elem`) lns
-        
+countCommonChars lns = length $ filter id $ fmap allHaveChar ['a' .. 'z']
+  where
+    allHaveChar c = all (c `elem`) lns
+
 countAllCommonChars :: [Text] -> Int
-countAllCommonChars = 
+countAllCommonChars =
   sum . fmap (countCommonChars . fmap Text.unpack . Text.lines)
 
 day06 :: IO ()
