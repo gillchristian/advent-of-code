@@ -9,10 +9,10 @@ extra-source-files:
 
 dependencies:
 - base >= 4.7 && < 5
-- parsec
-- megaparsec
-- text
 - containers
+- graphite
+- parsec
+- text
 
 library:
   source-dirs: src
