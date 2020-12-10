@@ -9,6 +9,7 @@ import Day05 (day05)
 import Day06 (day06)
 import Day07 (day07)
 import Day08 (day08)
+import Day09 (day09)
 import qualified System.Environment as Env
 
 runDay :: String -> IO ()
@@ -39,6 +40,9 @@ runDay "07" = do
 runDay "08" = do
   putStrLn "Day 08"
   day08
+runDay "09" = do
+  putStrLn "Day 09"
+  day09
 runDay x = do
   putStrLn $ "Day '" ++ x ++ "' not available yet ..."
   putStrLn "Please select another day"
