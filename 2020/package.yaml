@@ -12,6 +12,7 @@ dependencies:
 - containers
 - graphite
 - parsec
+- graphite
 - text
 
 library:

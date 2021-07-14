@@ -89,3 +89,93 @@ day07 = do
       weightedGraph = DGraph.fromArcsList $ arcsFromWeightedEdges =<< weightedEdges
   putStrLn $ "Part 1: " <> show (fromMaybe 0 $ allPathsToEdge edges "shiny gold")
   putStrLn $ "Part 2: " <> show (countWeights weightedGraph "shiny gold")
+
+-- WIP ???
+-- import Control.Applicative ((<|>))
+-- import Data.Either (fromRight)
+-- import Data.Graph.DGraph (DGraph, fromArcsList, inboundingArcs, isSink, isSource, outboundingArcs)
+-- import Data.Graph.Types (Arc (..))
+-- import Data.List (nub)
+-- import Text.Parsec (char, digit, endBy, eof, letter, many1, optional, parse, sepBy, spaces, string, try)
+-- import Text.Parsec.String (Parser)
+-- import Text.Read (readMaybe)
+
+-- type BagRule =
+--   (String, [(String, Int)])
+
+-- type BagGraph = DGraph String Int
+
+-- target :: String
+-- target = "shiny gold"
+
+-- integer :: Parser Int
+-- integer = do
+--   digits <- many1 digit
+--   case readMaybe digits of
+--     Just n -> pure n
+--     Nothing -> fail "expected int"
+
+-- parseBagName :: Parser String
+-- parseBagName = do
+--   adj <- many1 letter <* spaces
+--   color <- many1 letter <* spaces <* string "bag" <* optional (char 's')
+
+--   pure $ adj <> " " <> color
+
+-- destination :: Parser (String, Int)
+-- destination = do
+--   amount <- integer <* spaces
+--   name <- parseBagName
+
+--   pure (name, amount)
+
+-- destinationList :: Parser [(String, Int)]
+-- destinationList = sepBy destination (string ", ")
+
+-- parseDestinations :: Parser [(String, Int)]
+-- parseDestinations = try ([] <$ string "no other bags") <|> destinationList
+
+-- parseBagRule :: Parser BagRule
+-- parseBagRule = do
+--   outer <- parseBagName <* spaces <* string "contain" <* spaces
+--   destinations <- parseDestinations <* char '.'
+
+--   pure (outer, destinations)
+
+-- parseBagRules :: Parser [BagRule]
+-- parseBagRules =
+--   spaces *> endBy parseBagRule spaces <* eof
+
+-- parseInput :: String -> [BagRule]
+-- parseInput = fromRight [] . parse parseBagRules ""
+
+-- ruleToArcs :: BagRule -> [Arc String Int]
+-- ruleToArcs (source, destinations) = fmap (uncurry (Arc source)) destinations
+
+-- buildGraph :: [BagRule] -> BagGraph
+-- buildGraph = fromArcsList . foldMap ruleToArcs
+
+-- indirectInbounds :: String -> BagGraph -> [String]
+-- indirectInbounds name graph =
+--   if isSource graph name
+--     then []
+--     else foldMap (\(Arc s _ _) -> s : indirectInbounds s graph) (inboundingArcs graph name)
+
+-- outboundWeight :: String -> BagGraph -> Int
+-- outboundWeight name graph =
+--   if isSink graph name
+--     then 1
+--     else (+ 1) $ sum $ (\(Arc _ d n) -> n * outboundWeight d graph) <$> outboundingArcs graph name
+
+-- part1 :: String -> Int
+-- part1 = length . nub . indirectInbounds target . buildGraph . parseInput
+
+-- part2 :: String -> Int
+-- part2 = (-1 +) . outboundWeight target . buildGraph . parseInput
+
+-- day07 :: IO ()
+-- day07 = do
+--   input <- readFile "input/day07.txt"
+
+--   print $ part1 input
+--   print $ part2 input
