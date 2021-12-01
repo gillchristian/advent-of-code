@@ -1,24 +1,19 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 module Day01 where
 
-countIncreases :: [Int] -> Int
-countIncreases xs = go 0 xs
-  where
-  go n (x:y:rest) = go (if y > x then n + 1 else n) (y:rest)
-  go n [x] = n
-  go n [] = n
+sumWindow :: (Int, Int) -> [Int] -> Int
+sumWindow (i, n) = sum . take n . drop i
 
-countWindowIncreases :: [Int] -> Int
-countWindowIncreases xs = go 0 xs
+countIncreases :: Int -> [Int] -> Int
+countIncreases n xs = go xs 0
   where
-  go n (a:b:c:d:rest) =
-    let x = a + b + c
-        y = b + c + d
-     in go (if y > x then n + 1 else n) (b:c:d:rest)
-  go n _ = n
+  go xs c
+    | length xs <= n = c
+    | sumWindow (1, n) xs > sumWindow (0, n) xs = go (drop 1 xs) $ c + 1
+    | otherwise = go (drop 1 xs) c
 
 day01 :: IO ()
 day01 = do
   ls :: [Int] <- fmap read . lines <$> readFile "input/day01.txt"
-  print $ countIncreases ls
-  print $ countWindowIncreases ls
+  print $ countIncreases 1 ls
+  print $ countIncreases 3 ls
