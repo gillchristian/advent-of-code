@@ -4,26 +4,23 @@ import Text.Read (readEither)
 import qualified System.Exit as Sys
 
 data Instruction
-  = Up Int
-  | Down Int
-  | Fwd Int
+  = Vertical Int
+  | Horizontal Int
   deriving (Show, Eq)
 
 parse :: [String] -> Either String Instruction
-parse ["up", n] = Up <$> readEither n
-parse ["down", n] = Down <$> readEither n
-parse ["forward", n] = Fwd <$> readEither n
+parse ["up", n] = Vertical <$> negate <$> readEither n
+parse ["down", n] = Vertical <$> readEither n
+parse ["forward", n] = Horizontal <$> readEither n
 parse ws = Left $ "Unexpected instruction: " <> unwords ws
 
 move :: (Int, Int) -> Instruction -> (Int, Int)
-move (x, y) (Up n) = (x - n, y)
-move (x, y) (Down n) = (x + n, y)
-move (x, y) (Fwd n) = (x, y + n)
+move (x, y) (Vertical n) = (x + n, y)
+move (x, y) (Horizontal n) = (x, y + n)
 
 aim :: (Int, Int, Int) -> Instruction -> (Int, Int, Int)
-aim (x, y, aim) (Up n) = (x, y, aim - n)
-aim (x, y, aim) (Down n) = (x, y, aim + n)
-aim (x, y, aim) (Fwd n) = (x + n, y + aim * n, aim)
+aim (x, y, aim) (Vertical n) = (x, y, aim + n)
+aim (x, y, aim) (Horizontal n) = (x + n, y + aim * n, aim)
 
 fst2 :: (a, b, c) -> (a, b)
 fst2 (a, b, _) = (a, b)
