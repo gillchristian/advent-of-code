@@ -3,6 +3,7 @@ module Main where
 import Data.List (sort)
 import Day01 (day01)
 import Day02 (day02)
+import Day03 (day03)
 import qualified System.Environment as Env
 
 runDay :: String -> IO ()
@@ -15,6 +16,9 @@ runDay "01" = do
 runDay "02" = do
   putStrLn "Day 02"
   day02
+runDay "03" = do
+  putStrLn "Day 03"
+  day03
 runDay x = do
   putStrLn $ "Day '" ++ x ++ "' not available yet ..."
   putStrLn "Please select another day"
