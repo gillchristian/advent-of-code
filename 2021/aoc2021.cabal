@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 3eaf0efe70fa9fcbabb28373409ab56da2917f873d79616c1d57cb6769007bcf
+-- hash: e0e1ec132b45daf888f73101b0f6fdffb2997d868e692d92be6dbec0f3beb907
 
 name:           aoc2021
 version:        0.1.0.0
@@ -29,12 +29,14 @@ library
       Day01
       Day02
       Day03
+      Utils
   other-modules:
       Paths_aoc2021
   hs-source-dirs:
       src
   build-depends:
       base >=4.7 && <5
+    , time-units
   default-language: Haskell2010
 
 executable aoc2021-exe
@@ -47,6 +49,7 @@ executable aoc2021-exe
   build-depends:
       aoc2021
     , base >=4.7 && <5
+    , time-units
   default-language: Haskell2010
 
 test-suite aoc2021-test
@@ -60,4 +63,5 @@ test-suite aoc2021-test
   build-depends:
       aoc2021
     , base >=4.7 && <5
+    , time-units
   default-language: Haskell2010

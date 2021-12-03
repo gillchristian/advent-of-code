@@ -1,54 +1,42 @@
 module Day03 where
 
-import qualified System.Exit as Sys
+import Data.Char (digitToInt)
 
-both :: (a -> b) -> (a, a) -> (b, b)
-both f (x, y) = (f x, f y)
+flipBit :: Int -> Int
+flipBit 0 = 1
+flipBit _ = 0
 
-parseDigit :: Char -> Word
-parseDigit '1' = 1
-parseDigit _ = 0
-
-complementBinDigit :: Word -> Word
-complementBinDigit 0 = 1
-complementBinDigit _ = 0
-
-complementBin :: [Word] -> [Word]
-complementBin = map complementBinDigit
-
-fromBinary :: [Word] -> Word
+fromBinary :: [Int] -> Int
 fromBinary = sum . zipWith (*) (map (2 ^) [0..]) . reverse
 
-sumElems :: [[Word]] -> [Word]
+sumElems :: [[Int]] -> [Int]
 sumElems = foldl (zipWith (+)) (repeat 0)
 
-mostCommonDigits :: [[Word]] -> [Word]
-mostCommonDigits bs = map mostCommon $ map fromIntegral $ sumElems bs
+mostCommon :: [[Int]] -> [Int]
+mostCommon bs =
+  map mostCommonBit $ map fromIntegral $ sumElems bs
   where
   half = fromIntegral (length bs) / 2.0
-  mostCommon n = if n >= half then 1 else 0
+  mostCommonBit n = if n >= half then 1 else 0
 
-part1 :: [Word] -> (Word, Word)
-part1 = (,) <$> fromBinary <*> (fromBinary . complementBin)
+part1 :: [[Int]] -> (Int, Int)
+part1 bs = (,) <$> fromBinary <*> (fromBinary . map flipBit) $ mostCommon bs
 
-findRating :: Word -> [[Word]] -> Maybe [Word]
-findRating criteria = go 0
+findRating :: ([[Int]] -> [Int]) -> [[Int]] -> [Int]
+findRating find = go 0
   where
-  go :: Int -> [[Word]] -> Maybe [Word]
-  go _ [] = Nothing
-  go _ [b] = Just b
-  go i bs = go (i + 1) $ filter ((==) (mostCommon !! i) . (!! i)) bs
-    where
-    mostCommon = case criteria of
-      0 -> complementBin $ mostCommonDigits bs
-      1 -> mostCommonDigits bs
+  go :: Int -> [[Int]] -> [Int]
+  go _ [b] = b
+  go i bs = go (i + 1) $ filter ((== find bs !! i) . (!! i)) bs
   
-part2 :: [[Word]] -> Maybe (Word, Word)
+part2 :: [[Int]] -> (Int, Int)
 part2 bs =
-  fmap (both fromBinary) $ (,) <$> (findRating 1 bs) <*> (findRating 0 bs)
+  ( fromBinary $ findRating mostCommon bs
+  , fromBinary $ findRating (map flipBit . mostCommon) bs
+  )
 
 day03 :: IO ()
 day03 = do
-  bs <- fmap (fmap parseDigit) <$> lines <$> readFile "input/day03.txt"
-  print $ uncurry (*) $ part1 $ mostCommonDigits bs
-  maybe (Sys.die "No solution") (print . uncurry (*)) $ part2 bs
+  bs <- fmap (fmap digitToInt) <$> lines <$> readFile "input/day03.txt"
+  print $ uncurry (*) $ part1 bs
+  print $ uncurry (*) $ part2 bs
