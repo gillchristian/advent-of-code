@@ -59,7 +59,9 @@ countEpts = sum . map (sum . map unCell . filter isCell) . fst
 calcSolution :: (Int, Board) -> Int
 calcSolution (n, board) = n * countEpts board
 
-findWinner :: [Int] -> [Board] -> Maybe (Int, Board)
+type Strategy = [Int] -> [Board] -> Maybe (Int, Board)
+
+findWinner :: Strategy
 findWinner [] _ = Nothing
 findWinner _ [] = Nothing
 findWinner (x:xs) boards =
@@ -69,22 +71,19 @@ findWinner (x:xs) boards =
   where
   next = map (markNumber x) boards
 
-findLastWinner :: [Int] -> [Board] -> Maybe (Int, Board)
-findLastWinner [] boards = Nothing
-findLastWinner _ [] = Nothing
-findLastWinner (x:xs) boards =
+findLoser :: Strategy
+findLoser [] boards = Nothing
+findLoser _ [] = Nothing
+findLoser (x:xs) boards =
   case zipMap checkBoard $ map (markNumber x) boards of
     [(board, True)] -> Just (x, board)
-    res -> findLastWinner xs $ fst $ unzip $ filter (not . snd) res
+    next -> findLoser xs $ fst $ unzip $ filter (not . snd) next
 
-part1 :: [Int] -> [Board] -> Maybe Int
-part1 nums boards = calcSolution <$> findWinner nums boards
-
-part2 :: [Int] -> [Board] -> Maybe Int
-part2 nums boards = calcSolution <$> findLastWinner nums boards
+solve :: [Int] -> [Board] -> Strategy -> Maybe Int
+solve nums boards strat = calcSolution <$> strat nums boards
 
 day04 :: IO ()
 day04 = do
   (nums, boards) <- parse <$> readFile "input/day04.txt"
-  maybe (Sys.die "No solution") print $ part1 nums boards
-  maybe (Sys.die "No solution") print $ part2 nums boards
+  maybe (Sys.die "No solution") print $ solve nums boards findWinner
+  maybe (Sys.die "No solution") print $ solve nums boards findLoser
