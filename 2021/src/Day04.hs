@@ -1,10 +1,11 @@
 {-# LANGUAGE TupleSections #-}
 module Day04 where
 
+import Control.Monad (join)
 import Data.List.Split (splitOn)
 import Data.List (transpose, find)
-import Utils (zipMap, both, note)
 import qualified System.Exit as Sys
+import Utils (zipMap, both, note)
 
 data Cell
   = Ept {unCell :: Int}
@@ -54,7 +55,7 @@ checkBoard :: Board -> Bool
 checkBoard = uncurry (||) . both (any checkLine)
 
 countEpts :: Board -> Int
-countEpts = sum . map (sum . map unCell . filter isCell) . fst
+countEpts = sum . map unCell . filter isCell . join . fst
 
 calcSolution :: (Int, Board) -> Int
 calcSolution (n, board) = n * countEpts board
