@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: dfef6c99a00b9e4083b191e89b39e89ac98e5e489750483cc2b02570dca92494
+-- hash: 715ae10e09d7b415820cd09624eeac7550294568cde742fe265bd806515059a8
 
 name:           aoc2021
 version:        0.1.0.0
@@ -43,6 +43,7 @@ library
     , containers
     , split
     , time-units
+    , unordered-containers
   default-language: Haskell2010
 
 executable aoc2021-exe
@@ -60,6 +61,7 @@ executable aoc2021-exe
     , containers
     , split
     , time-units
+    , unordered-containers
   default-language: Haskell2010
 
 test-suite aoc2021-test
@@ -78,4 +80,5 @@ test-suite aoc2021-test
     , containers
     , split
     , time-units
+    , unordered-containers
   default-language: Haskell2010

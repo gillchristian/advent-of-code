@@ -8,8 +8,8 @@ import Data.Attoparsec.ByteString (Parser)
 import qualified Data.Attoparsec.ByteString.Char8 as P
 import qualified Data.Attoparsec.ByteString as P
 import qualified Data.ByteString as BS
-import Data.Map.Strict (Map)
-import qualified Data.Map.Strict as Map
+import Data.HashMap.Strict (HashMap)
+import qualified Data.HashMap.Strict as HashMap
 
 spaces :: Parser ()
 spaces = P.skipMany P.space
@@ -45,17 +45,17 @@ allCoords l@(Line (x1, y1) (x2, y2))
   | x1 == x2 = map (x1,) $ range y1 y2
   | y1 == y2 = map (,y1) $ range x1 x2
 
-type Grid = Map Coord Int
+type Grid = HashMap Coord Int
 
 insertCoord :: Grid -> Coord -> Grid
-insertCoord grid coord = Map.insertWith (+) coord 1 grid
+insertCoord grid coord = HashMap.insertWith (+) coord 1 grid
 
 solve :: (Line -> [Coord]) -> [Line] -> Int
 solve coordsFromLine =
   length 
     . filter (>= 2)
-    . Map.elems
-    . foldl insertCoord Map.empty
+    . HashMap.elems
+    . foldl insertCoord HashMap.empty
     . (coordsFromLine =<<)
 
 day05 :: IO ()
