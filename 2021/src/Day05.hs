@@ -28,10 +28,10 @@ parseLine =
   Line <$> parseCoord <* spaces <* P.string "->" <* spaces
        <*> parseCoord
 
-range :: (Ord a, Enum a) => a -> a -> [a]
+range :: (Ord a, Enum a, Num a) => a -> a -> [a]
 range x y
   | x < y = [x..y]
-  | otherwise = reverse [y..x]
+  | otherwise = [x, x-1..y]
 
 nonDiagonalCoords :: Line -> [Coord]
 nonDiagonalCoords l@(Line (x1, y1) (x2, y2))

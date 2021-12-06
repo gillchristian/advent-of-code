@@ -24,6 +24,7 @@ dependencies:
 - attoparsec
 - bytestring
 - containers
+- hashable
 - split
 - time-units
 - unordered-containers

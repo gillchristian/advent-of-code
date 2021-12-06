@@ -21,3 +21,7 @@ zipMap = map . toSnd
 note :: b -> Maybe a -> Either b a
 note b Nothing = Left b
 note _ (Just a) = Right a
+
+loopN :: Int -> (a -> a) -> a -> a
+loopN 0 _ a = a
+loopN n f a = loopN (n - 1) f (f a)
