@@ -12,10 +12,10 @@ parse = fmap read . splitOn ","
 type State = HashMap Int (Sum Int)
 
 age :: State -> State
-age state = HashMap.insertWith (<>) 6 zeros $ HashMap.insert 8 zeros next
+age = HashMap.foldlWithKey insert HashMap.empty
   where
-  (zeros:rest) = fmap (\k -> HashMap.findWithDefault (Sum 0) k state) [0..8]
-  next = foldl (\acc (k, val) -> HashMap.insert k val acc) state $ zip [0..7] rest
+  insert state 0 v = HashMap.insertWith (<>) 6 v $ HashMap.insert 8 v state
+  insert state k v = HashMap.insertWith (<>) (k - 1) v state
 
 mkState :: [Int] -> State
 mkState = foldl (\acc k -> HashMap.insertWith (<>) k (Sum 1) acc) HashMap.empty
