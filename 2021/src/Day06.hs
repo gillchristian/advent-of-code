@@ -1,27 +1,34 @@
 module Day06 where
 
-import Data.HashMap.Strict (HashMap)
-import qualified Data.HashMap.Strict as HashMap
 import Data.List.Split (splitOn)
-import Data.Monoid (Sum(..))
 import Utils (loopN)
 
 parse :: String -> [Int]
 parse = fmap read . splitOn ","
 
-type State = HashMap Int (Sum Int)
+type State = (Int, Int, Int, Int, Int, Int, Int, Int, Int)
 
 age :: State -> State
-age = HashMap.foldlWithKey insert HashMap.empty
-  where
-  insert state 0 v = HashMap.insertWith (<>) 6 v $ HashMap.insert 8 v state
-  insert state k v = HashMap.insertWith (<>) (k - 1) v state
+age (a, b, c, d, e, f, g, h, i) = (b, c, d, e, f, g, h + a, i, a)
+
+sumState :: State -> Int
+sumState (a, b, c, d, e, f, g, h, i) = a + b + c + d + e + f + g + h + i
 
 mkState :: [Int] -> State
-mkState = foldl (\acc k -> HashMap.insertWith (<>) k (Sum 1) acc) HashMap.empty
+mkState input =
+  ( length $ filter (== 0) input
+  , length $ filter (== 1) input
+  , length $ filter (== 2) input
+  , length $ filter (== 3) input
+  , length $ filter (== 4) input
+  , length $ filter (== 5) input
+  , length $ filter (== 6) input
+  , length $ filter (== 7) input
+  , length $ filter (== 8) input
+  )
 
 solve :: Int -> [Int] -> Int
-solve days = getSum . HashMap.foldl (<>) mempty . loopN days age . mkState
+solve days = sumState . loopN days age . mkState
 
 day06 :: IO ()
 day06 = do
