@@ -4,16 +4,12 @@ import Data.Attoparsec.ByteString (Parser)
 import qualified Data.Attoparsec.ByteString.Char8 as P
 import qualified Data.Attoparsec.ByteString as P
 import qualified Data.ByteString.Char8 as BS
-import Data.List (find, sort)
-import Data.List.NonEmpty (NonEmpty)
-import qualified Data.List.NonEmpty as NEL
-import Data.Map (Map, (!))
+import Data.List (sort)
+import Data.Map ((!))
 import qualified Data.Map as Map
-import Data.Set (Set)
-import qualified Data.Set as Set
 import Control.Applicative ((<|>))
 import Utils (toList4, unsafeFind, (<||>), (<&&>))
-import Utils.Parsing as P
+import qualified Utils.Parsing as P
 
 type Segment = Char
 
@@ -30,9 +26,9 @@ type DigitOutput = (Digit, Digit, Digit, Digit)
 
 digitOutput :: Parser DigitOutput
 digitOutput =
-  (,,,) <$> digit <* spaces
-        <*> digit <* spaces
-        <*> digit <* spaces
+  (,,,) <$> digit <* P.spaces
+        <*> digit <* P.spaces
+        <*> digit <* P.spaces
         <*> digit
 
 data Line = Line
@@ -42,7 +38,7 @@ data Line = Line
 
 line :: Parser Line
 line =
-  Line <$> (digit `P.sepBy1` spaces) <* spaces <* P.char '|' <* spaces
+  Line <$> (digit `P.sepBy1` P.spaces) <* P.spaces <* P.char '|' <* P.spaces
        <*> digitOutput
 
 parse :: BS.ByteString -> Either String [Line]
@@ -65,7 +61,8 @@ isSubsetOf :: (Eq a) => [a] -> [a] -> Bool
 isSubsetOf a b = all (`elem` b) a
 
 deduceOutput :: Line -> Int
-deduceOutput (Line signals (a, b, c, d)) = read $ show =<< [m ! a, m ! b, m ! c, m ! d]
+deduceOutput (Line signals (a, b, c, d)) =
+  read $ show =<< [m ! a, m ! b, m ! c, m ! d]
   where
   m = Map.fromList $ zip [n0, n1, n2, n3, n4, n5, n6, n7, n8, n9] [0..]
 
