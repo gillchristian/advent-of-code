@@ -31,15 +31,12 @@ digitOutput =
         <*> digit <* P.spaces
         <*> digit
 
-data Line = Line
-  { lSignals :: [Digit]
-  , lDigitOutput :: DigitOutput
-  } deriving (Show)
+type Line = ([Digit], DigitOutput)
 
 line :: Parser Line
 line =
-  Line <$> (digit `P.sepBy1` P.spaces) <* P.spaces <* P.char '|' <* P.spaces
-       <*> digitOutput
+  (,) <$> (digit `P.sepBy1` P.spaces) <* P.spaces <* P.char '|' <* P.spaces
+      <*> digitOutput
 
 parse :: BS.ByteString -> Either String [Line]
 parse = P.parseOnly (line `P.sepBy1` P.endOfLine)
@@ -51,17 +48,17 @@ parse = P.parseOnly (line `P.sepBy1` P.endOfLine)
 isEasyDigit :: Digit -> Bool
 isEasyDigit = ((== 2) <||> (== 4) <||> (== 3) <||> (== 7)) . length
 
-coutEasyDigitsOnInput :: DigitOutput -> Int
-coutEasyDigitsOnInput = length . filter isEasyDigit . toList4
+countEasyDigits :: DigitOutput -> Int
+countEasyDigits = length . filter isEasyDigit . toList4
 
 part1 :: [Line] -> Int
-part1 = sum . fmap coutEasyDigitsOnInput . fmap lDigitOutput
+part1 = sum . fmap countEasyDigits . fmap snd
 
 isSubsetOf :: (Eq a) => [a] -> [a] -> Bool
 isSubsetOf a b = all (`elem` b) a
 
 deduceOutput :: Line -> Int
-deduceOutput (Line signals (a, b, c, d)) =
+deduceOutput (signals, (a, b, c, d)) =
   read $ show =<< [m ! a, m ! b, m ! c, m ! d]
   where
   m = Map.fromList $ zip [n0, n1, n2, n3, n4, n5, n6, n7, n8, n9] [0..]
