@@ -1,5 +1,7 @@
 module Utils where
 
+import Data.List (find)
+import Data.Maybe (fromMaybe)
 import Data.Time.Units as Time
 
 withTime :: IO () -> IO ()
@@ -25,3 +27,15 @@ note _ (Just a) = Right a
 loopN :: Int -> (a -> a) -> a -> a
 loopN 0 _ a = a
 loopN n f a = loopN (n - 1) f (f a)
+
+(<&&>) :: Applicative f => f Bool -> f Bool -> f Bool
+(<&&>) f g = (&&) <$> f <*> g
+
+(<||>) :: Applicative f => f Bool -> f Bool -> f Bool
+(<||>) f g = (||) <$> f <*> g
+
+toList4 :: (a, a, a, a) -> [a]
+toList4 (a, b, c, d) = [a, b, c, d]
+
+unsafeFind :: (a -> Bool) -> [a] -> a
+unsafeFind f = fromMaybe (error "Found nothing xD") . find f
